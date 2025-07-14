@@ -5,7 +5,7 @@ import matplotlib as mpl
 
 dt = 0.01
 dx = 0.02
-T = 100
+T = 200
 X = 100
 x_0 = -1.0
 
@@ -54,7 +54,6 @@ def IncrementTimestep(current_data):
     elif x == X-1 :
       new_data.append(current_data[x] - (dt/dx)*(Flux(current_data[x])-NumericFlux(current_data[x-1],current_data[x])))
     else :
-      print(str(current_data[x-1])+" and "+str(current_data[x])+" and "+str(current_data[x+1]) + " and " +str(NumericFlux(current_data[x],current_data[x+1])) + " versus " + str(NumericFlux(current_data[x-1],current_data[x])))
       new_data.append(current_data[x] - (dt/dx)*(NumericFlux(current_data[x],current_data[x+1])-NumericFlux(current_data[x-1],current_data[x])))
   return new_data
 
@@ -66,5 +65,5 @@ for t in range(T-1):
   current_data = IncrementTimestep(current_data)
   final_data.append(current_data.copy())
 fig, ax = plt.subplots()
-im = ax.imshow(final_data)
+im = ax.imshow(final_data,"plasma")
 plt.show()
