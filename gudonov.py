@@ -3,17 +3,19 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib as mpl
 
+dt = 0.1
+dx = 0.1
+T = 20
+X = 20
+x_0 = -1.0
+
 #Sets initial data
-def InitialData(params):
-  dt = params['dt']
-  dx = params['dx']
-  X = params['X']
-  x_0 = params['x_0']
+def InitialData():
   u_l = 0.0
   u_r = 1.0
-  inital_values = []
+  initial_values = []
   for x in range(X):
-    if (x_0 + (dx * x)) <= 0) :
+    if (x_0 + (dx * x)) <= 0 :
       initial_values.append(u_l)
     else :
       initial_values.append(u_r)
@@ -24,11 +26,11 @@ def InitialData(params):
 def NumericFlux(u_l,u_r):
   if (u_l < u_r) and (Flux(u_l) <= Flux(u_r)):
     return Flux(u_l)
-  else if (u_l < u_r):
+  elif (u_l < u_r):
     return Flux(u_r)
-  else if (FluxDerivative(u_l) >= 0):
+  elif (FluxDerivative(u_l) >= 0):
     return Flux(u_l)
-  else if (FluxDerivative(u_r) <= 0):
+  elif (FluxDerivative(u_r) <= 0):
     return Flux(u_r)
   else:
     a = -FluxDerivative(u_l)/(FluxDerivative(u_r)-FluxDerivative(u_l))
@@ -43,38 +45,25 @@ def FluxDerivative(u):
   return 1.0-2.0*u
   
 #Takes the input of current data and outputs resulting data of next timestep
-def IncrementTimestep(params, current_data):
-  dt = params['dt']
-  dx = params['dx']
-  X = params['X']
-  x_0 = params['x_0']
+def IncrementTimestep(current_data):
   new_data = []
   for x in range(X):
     #Special Cases for when x=0 and x=X
     if x == 0 :
       new_data.append(current_data[x] - (dt/dx)*(NumericFlux(current_data[x],current_data[x+1])-Flux(current_data[x])))
-    else if x == X-1 :
+    elif x == X-1 :
       new_data.append(current_data[x] - (dt/dx)*(Flux(current_data[x])-NumericFlux(current_data[x-1],current_data[x])))
     else :
       new_data.append(current_data[x] - (dt/dx)*(NumericFlux(current_data[x],current_data[x+1])-NumericFlux(current_data[x-1],current_data[x])))
   return new_data
 
-#Parameters for the method; T is the number of total time steps, and X is the total number of cells.
-params = {
-  'dt' = 0.1
-  'dx' = 0.1
-  'T' = 20
-  'X' = 20
-  'x_0' = -1.0
-}
-
 #Main
 final_data = []
-current_data = InitialData(params)
+current_data = InitialData()
 final_data.append(current_data.copy())
 for t in range(T-1):
-  current_data = IncrementTimestep(params, current_data)
+  current_data = IncrementTimestep(current_data)
   final_data.append(current_data.copy())
 fig, ax = plt.subplots()
-im = ax.imshow(harvest)
+im = ax.imshow(final_data)
 plt.show()
