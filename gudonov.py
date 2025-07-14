@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib as mpl
 
-dt = 0.1
-dx = 0.1
-T = 20
-X = 20
+dt = 0.01
+dx = 0.02
+T = 100
+X = 100
 x_0 = -1.0
 
 #Sets initial data
 def InitialData():
-  u_l = 0.0
-  u_r = 1.0
+  u_l = 0.75
+  u_r = 0.25
   initial_values = []
   for x in range(X):
     if (x_0 + (dx * x)) <= 0 :
@@ -34,7 +34,7 @@ def NumericFlux(u_l,u_r):
     return Flux(u_r)
   else:
     a = -FluxDerivative(u_l)/(FluxDerivative(u_r)-FluxDerivative(u_l))
-    return (1.0-a)*Flux(u_l) + a*Flux(u_r)
+    return Flux((1.0-a)*u_l+a*u_r)
     
     
 
@@ -54,6 +54,7 @@ def IncrementTimestep(current_data):
     elif x == X-1 :
       new_data.append(current_data[x] - (dt/dx)*(Flux(current_data[x])-NumericFlux(current_data[x-1],current_data[x])))
     else :
+      print(str(current_data[x-1])+" and "+str(current_data[x])+" and "+str(current_data[x+1]) + " and " +str(NumericFlux(current_data[x],current_data[x+1])) + " versus " + str(NumericFlux(current_data[x-1],current_data[x])))
       new_data.append(current_data[x] - (dt/dx)*(NumericFlux(current_data[x],current_data[x+1])-NumericFlux(current_data[x-1],current_data[x])))
   return new_data
 
