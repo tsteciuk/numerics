@@ -5,18 +5,21 @@ import matplotlib as mpl
 
 dt = 0.01
 dx = 0.02
-T = 200
-X = 100
-x_0 = -1.0
+T = 1000
+X = 500
+x_0 = -5.0
 
 #Sets initial data
 def InitialData():
-  u_l = 0.75
-  u_r = 0.25
+  u_l = 0.1
+  u_m = 0.7
+  u_r = 0.1
   initial_values = []
   for x in range(X):
-    if (x_0 + (dx * x)) <= 0 :
+    if (x_0 + (dx * x)) <= -0.5 :
       initial_values.append(u_l)
+    elif (x_0 + (dx * x)) <= 0.5 :
+      initial_values.append(u_m)
     else :
       initial_values.append(u_r)
   return initial_values
@@ -33,8 +36,7 @@ def NumericFlux(u_l,u_r):
   elif (FluxDerivative(u_r) <= 0):
     return Flux(u_r)
   else:
-    a = -FluxDerivative(u_l)/(FluxDerivative(u_r)-FluxDerivative(u_l))
-    return Flux((1.0-a)*u_l+a*u_r)
+    return Flux(0.5) #in this case, the value of the flux function at the critical point is returned
     
     
 
@@ -66,4 +68,7 @@ for t in range(T-1):
   final_data.append(current_data.copy())
 fig, ax = plt.subplots()
 im = ax.imshow(final_data,"plasma")
-plt.show()
+plt.xlabel("Position")
+plt.ylabel("Time")
+plt.axis([0,X,0,T])
+plt.savefig("gudonov_plot.png")
